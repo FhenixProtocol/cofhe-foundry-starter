@@ -12,5 +12,7 @@ broadcast/
 # Deployments
 deployments/
 
+.anvil.log
+
 # OS
 .DS_Store

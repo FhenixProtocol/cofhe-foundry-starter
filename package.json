@@ -7,6 +7,7 @@
     "build": "forge build",
     "test": "forge test -vvv",
     "test:gas": "forge test -vvv --gas-report",
+    "dev": "bash script/dev.sh",
     "clean": "forge clean",
     "deploy:eth-sepolia": "source .env && forge script script/DeployCounter.s.sol --rpc-url eth-sepolia --broadcast --verify",
     "deploy:arb-sepolia": "source .env && forge script script/DeployCounter.s.sol --rpc-url arb-sepolia --broadcast --verify",

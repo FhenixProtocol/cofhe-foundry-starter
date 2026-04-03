@@ -22,22 +22,29 @@ forge build
 
 # Run tests
 forge test -vvv
+
+# runs the local Forge node
+yarn dev
 ```
 
 ## Project Structure
 
 ```
 ├── src/
-│   └── Counter.sol           # Example FHE counter contract
+│   └── mocks/
+│   │   └── ForgeMockACL.sol    # The MockACL that works with Forge
+│   └── Counter.sol             # Example FHE counter contract
 ├── test/
-│   └── Counter.t.sol         # Comprehensive Solidity tests
+│   └── Counter.t.sol           # Comprehensive Solidity tests
 ├── script/
-│   ├── DeployCounter.s.sol   # Deployment script
-│   ├── IncrementCounter.s.sol # Increment interaction
-│   └── ResetCounter.s.sol    # Reset with encrypted input
-├── foundry.toml              # Foundry configuration
-├── package.json              # npm dependencies
-└── remappings.txt            # Solidity import remappings
+│   ├── DeployCounter.s.sol     # Deployment script
+│   ├── IncrementCounter.s.sol  # Increment interaction
+│   └── ResetCounter.s.sol      # Reset with encrypted input
+│   └── dev.sh                  # Shell script to etch FHE, deploy and init contracts and run forge
+│   └── DeployDEv.s.sol         # Initializes etched addresses for MockAcl
+├── foundry.toml                # Foundry configuration
+├── package.json                # npm dependencies
+└── remappings.txt              # Solidity import remappings
 ```
 
 ## How FHE Testing Works
