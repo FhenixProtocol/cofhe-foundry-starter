@@ -42,9 +42,9 @@ forge test -vvv
 
 ## How FHE Testing Works
 
-Tests use `CoFheTest` from `@cofhe/mock-contracts`, which provides mock contract deployment, encrypted input creation, plaintext assertions, and permission testing -- all in Solidity with no JS SDK needed.
+Tests inherit `CofheTest` from `@cofhe/foundry-plugin`. Call `deployMocks()` in `setUp`, create per-user `CofheClient` instances for encrypted inputs / permits, and assert with `expectPlaintext` -- all in Solidity with no JS SDK needed.
 
-For the full testing guide covering all helper functions, FHE operations, ACL, permits, and patterns, see **[TESTING.md](TESTING.md)**.
+For the full testing guide covering helpers, FHE operations, ACL, permits, and patterns, see **[TESTING.md](TESTING.md)**.
 
 ## Deployment
 
@@ -89,7 +89,8 @@ npm run test:gas
 | Package | Purpose |
 |---------|---------|
 | `@fhenixprotocol/cofhe-contracts` | FHE type definitions and operations (FHE.sol) |
-| `@cofhe/mock-contracts` | Mock contracts for local testing + Foundry helpers |
+| `@cofhe/foundry-plugin` | `CofheTest` / `CofheClient` Foundry test helpers |
+| `@cofhe/mock-contracts` | Mock CoFHE contracts used by the Foundry plugin |
 | `@openzeppelin/contracts` | Standard contract utilities |
 | `forge-std` | Foundry standard library (Test, Script, cheatcodes) |
 
