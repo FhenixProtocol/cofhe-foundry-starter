@@ -3,8 +3,8 @@ pragma solidity ^0.8.25;
 
 import {CofheTest} from "@cofhe/foundry-plugin/contracts/CofheTest.sol";
 import {CofheClient} from "@cofhe/foundry-plugin/contracts/CofheClient.sol";
-import {euint32, InEuint32} from "@fhenixprotocol/cofhe-contracts/FHE.sol";
-import {Permission} from "@cofhe/mock-contracts/contracts/Permissioned.sol";
+import {euint32, externalEuint32} from "@fhenixprotocol/cofhe-contracts/FHE.sol";
+import {ACP} from "@cofhe/mock-contracts/contracts/Permissioned.sol";
 import {Counter} from "../src/Counter.sol";
 
 contract CounterTest is CofheTest {
@@ -50,18 +50,19 @@ contract CounterTest is CofheTest {
     }
 
     function test_ShouldEncryptInputAndResetCounter() public {
-        InEuint32 memory encrypted = bob.createInEuint32(2000);
+        // 0.7: encrypted inputs are a handle + proof pair, bound to the consuming contract.
+        (externalEuint32 handle, bytes memory proof) = bob.createExternalEuint32(2000, address(counter));
 
         vm.prank(bob.account());
-        counter.reset(encrypted);
+        counter.reset(handle, proof);
 
         expectPlaintext(counter.count(), uint32(2000));
     }
 
     function test_ShouldHandleMultipleOperationsInSequence() public {
-        InEuint32 memory encrypted = bob.createInEuint32(10);
+        (externalEuint32 handle, bytes memory proof) = bob.createExternalEuint32(10, address(counter));
         vm.prank(bob.account());
-        counter.reset(encrypted);
+        counter.reset(handle, proof);
 
         // 10 -> 11 -> 12 -> 13 -> 12
         vm.startPrank(bob.account());
@@ -77,9 +78,9 @@ contract CounterTest is CofheTest {
     // --- On-chain Decryption (allowPublic → decryptForTx → publishDecryptResult) ---
 
     function test_ShouldRevertBeforeDecryptionPublished() public {
-        InEuint32 memory encrypted = bob.createInEuint32(42);
+        (externalEuint32 handle, bytes memory proof) = bob.createExternalEuint32(42, address(counter));
         vm.prank(bob.account());
-        counter.reset(encrypted);
+        counter.reset(handle, proof);
 
         vm.prank(bob.account());
         counter.allowCounterPublicly();
@@ -89,9 +90,9 @@ contract CounterTest is CofheTest {
     }
 
     function test_ShouldReturnDecryptedValueAfterPublish() public {
-        InEuint32 memory encrypted = bob.createInEuint32(42);
+        (externalEuint32 handle, bytes memory proof) = bob.createExternalEuint32(42, address(counter));
         vm.prank(bob.account());
-        counter.reset(encrypted);
+        counter.reset(handle, proof);
 
         // Step 1: contract grants public decrypt permission
         vm.prank(bob.account());
@@ -99,8 +100,7 @@ contract CounterTest is CofheTest {
 
         // Step 2: SDK fetches plaintext + threshold-network signature
         bytes32 ctHash = euint32.unwrap(counter.count());
-        (, uint256 plaintext, bytes memory sig) = bob
-            .decryptForTx_withoutPermit(ctHash);
+        (, uint256 plaintext, bytes memory sig) = bob.decryptForTx_withoutACP(ctHash);
         assertEq(plaintext, 42);
 
         // Step 3: contract verifies signature and stores plaintext
@@ -119,7 +119,7 @@ contract CounterTest is CofheTest {
         expectPlaintext(counter.count(), uint32(2));
     }
 
-    // --- ACL & Permit Unsealing ---
+    // --- ACL & ACP Unsealing ---
 
     function test_CallerCanUnsealAfterIncrement() public {
         vm.prank(bob.account());
@@ -127,8 +127,8 @@ contract CounterTest is CofheTest {
 
         bytes32 ctHash = euint32.unwrap(counter.count());
 
-        Permission memory bobPermit = bob.permit_createSelf();
-        uint256 decrypted = bob.decryptForView(ctHash, bobPermit);
+        ACP memory bobAcp = bob.ACP_createSelf();
+        uint256 decrypted = bob.decryptForView(ctHash, bobAcp);
         assertEq(decrypted, 1, "Decrypted value should be 1");
     }
 
@@ -140,14 +140,10 @@ contract CounterTest is CofheTest {
 
         // Alice has no ACL permission on this count -- assert deny via mock directly
         // (decryptForView would revert on deny).
-        Permission memory alicePermit = alice.permit_createSelf();
+        ACP memory aliceAcp = alice.ACP_createSelf();
 
-        (bool allowed, string memory error, ) = mockThresholdNetwork
-            .querySealOutput(ctHash, block.chainid, alicePermit);
-        assertFalse(
-            allowed,
-            "Alice should NOT be allowed to unseal bob's count"
-        );
+        (bool allowed, string memory error, ) = mockThresholdNetwork.querySealOutput(ctHash, block.chainid, aliceAcp);
+        assertFalse(allowed, "Alice should NOT be allowed to unseal bob's count");
         assertEq(error, "NotAllowed");
     }
 
@@ -157,8 +153,8 @@ contract CounterTest is CofheTest {
 
         bytes32 ctHash = euint32.unwrap(counter.count());
 
-        Permission memory bobPermit = bob.permit_createSelf();
-        uint256 unsealed = bob.decryptForView(ctHash, bobPermit);
+        ACP memory bobAcp = bob.ACP_createSelf();
+        uint256 unsealed = bob.decryptForView(ctHash, bobAcp);
         assertEq(unsealed, 1, "Unsealed value should be 1");
     }
 
@@ -173,14 +169,17 @@ contract CounterTest is CofheTest {
         bytes32 ctHash = euint32.unwrap(counter.count());
 
         // Alice can unseal the current count
-        Permission memory alicePermit = alice.permit_createSelf();
-        uint256 aliceDecrypted = alice.decryptForView(ctHash, alicePermit);
+        ACP memory aliceAcp = alice.ACP_createSelf();
+        uint256 aliceDecrypted = alice.decryptForView(ctHash, aliceAcp);
         assertEq(aliceDecrypted, 2);
 
         // Bob cannot unseal the current count (alice was the last caller)
-        Permission memory bobPermit = bob.permit_createSelf();
-        (bool bobAllowed, string memory error, ) = mockThresholdNetwork
-            .querySealOutput(uint256(ctHash), block.chainid, bobPermit);
+        ACP memory bobAcp = bob.ACP_createSelf();
+        (bool bobAllowed, string memory error, ) = mockThresholdNetwork.querySealOutput(
+            uint256(ctHash),
+            block.chainid,
+            bobAcp
+        );
         assertFalse(bobAllowed, "Bob should NOT unseal alice's count");
         assertEq(error, "NotAllowed");
     }
@@ -188,10 +187,10 @@ contract CounterTest is CofheTest {
     // --- Fuzz Tests ---
 
     function testFuzz_ResetCounter(uint32 value) public {
-        InEuint32 memory encrypted = bob.createInEuint32(value);
+        (externalEuint32 handle, bytes memory proof) = bob.createExternalEuint32(value, address(counter));
 
         vm.prank(bob.account());
-        counter.reset(encrypted);
+        counter.reset(handle, proof);
 
         expectPlaintext(counter.count(), value);
     }

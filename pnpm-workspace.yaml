@@ -1,0 +1,3 @@
+# @fhenixprotocol/cofhe-contracts' postinstall only prints a migration notice; no build step needed.
+allowBuilds:
+  '@fhenixprotocol/cofhe-contracts': false
