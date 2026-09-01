@@ -13,9 +13,9 @@
     "deploy:base-sepolia": "source .env && forge script script/DeployCounter.s.sol --rpc-url base-sepolia --broadcast --verify"
   },
   "devDependencies": {
-    "@cofhe/foundry-plugin": "0.5.1",
-    "@cofhe/mock-contracts": "0.5.1",
-    "@fhenixprotocol/cofhe-contracts": "0.1.3",
+    "@cofhe/foundry-plugin": "0.7.1",
+    "@cofhe/mock-contracts": "0.7.1",
+    "@fhenixprotocol/cofhe-contracts": "0.2.0",
     "@openzeppelin/contracts": "^5.4.0",
     "forge-std": "github:foundry-rs/forge-std"
   }

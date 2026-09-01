@@ -35,8 +35,12 @@ contract Counter {
         FHE.allowSender(count);
     }
 
-    function reset(InEuint32 memory value) public {
-        count = FHE.asEuint32(value);
+    /// @notice Reset the counter to an encrypted user input.
+    /// @dev In cofhe-contracts 0.2.0 the `InEuintXX` input structs are gone. Encrypted user
+    ///      inputs arrive as an `externalEuintXX` handle plus a `bytes` proof (the signature
+    ///      covering the batch the handle was encrypted in).
+    function reset(externalEuint32 value, bytes memory proof) public {
+        count = FHE.asEuint32(value, proof);
         FHE.allowThis(count);
         FHE.allowSender(count);
     }

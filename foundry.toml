@@ -7,7 +7,7 @@ script = "script"
 solc_version = "0.8.25"
 evm_version = "cancun"
 auto_detect_remappings = false
-code_size_limit = 100000
+code_size_limit = 300000
 gas_reports = ["Counter"]
 ffi = false
 

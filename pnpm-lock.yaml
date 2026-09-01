@@ -9,14 +9,14 @@ importers:
   .:
     devDependencies:
       '@cofhe/foundry-plugin':
-        specifier: 0.5.1
-        version: 0.5.1
+        specifier: 0.7.1
+        version: 0.7.1
       '@cofhe/mock-contracts':
-        specifier: 0.5.1
-        version: 0.5.1
+        specifier: 0.7.1
+        version: 0.7.1
       '@fhenixprotocol/cofhe-contracts':
-        specifier: 0.1.3
-        version: 0.1.3
+        specifier: 0.2.0
+        version: 0.2.0
       '@openzeppelin/contracts':
         specifier: ^5.4.0
         version: 5.6.1
@@ -26,14 +26,14 @@ importers:
 
 packages:
 
-  '@cofhe/foundry-plugin@0.5.1':
-    resolution: {integrity: sha512-kyZNURfjX1t2NSwiwXNbDkxX2WwHTuMQ1jw81X8XXaTJlKK6JoP0e7bZkIJvjyZoTO6O5wfi2g90j1bkjagkAg==}
+  '@cofhe/foundry-plugin@0.7.1':
+    resolution: {integrity: sha512-zndDbVcl5akTdrvk7PXNJRfHLkBKQJNVV0sG2L4P9sarCMGek/S3Atc1GFq83BcSs3HEAD/UyIO4++iGV4k4Fg==}
 
-  '@cofhe/mock-contracts@0.5.1':
-    resolution: {integrity: sha512-3N8KgRx9jno+Js/VcX62kyaL6KUbyOxQPZ9eyiCPFhVle+tTXBpnu5q5wktOsLBgqhj1YvqW14ilRkPXk6eaUg==}
+  '@cofhe/mock-contracts@0.7.1':
+    resolution: {integrity: sha512-0X7qMiwadIGjZNfLAlAUNlqTo131V6X7O2Qw+0a4J+mBmnnfPIo1NPD0oVQsRk8uu8B3rHtggQutrmD8aKKQug==}
 
-  '@fhenixprotocol/cofhe-contracts@0.1.3':
-    resolution: {integrity: sha512-VegEHsy3a6DMHGlzhw5Xbqhp7zYvlK601z5VO5qQeeBjmOXEVhyWvVrpvmJgZfpDoT+bdCL19qExBJzKH5aYvA==}
+  '@fhenixprotocol/cofhe-contracts@0.2.0':
+    resolution: {integrity: sha512-8VNnTSSG1xdZPFwQybBWX0xzOYIlL9v6QAFa35tER7ChaAJx9JUcNT2UqZQux84ZCplOkS4cCfUv/mtQ/6nEzg==}
 
   '@openzeppelin/contracts-upgradeable@5.4.0':
     resolution: {integrity: sha512-STJKyDzUcYuB35Zub1JpWW58JxvrFFVgQ+Ykdr8A9PGXgtq/obF5uoh07k2XmFyPxfnZdPdBdhkJ/n2YxJ87HQ==}
@@ -47,24 +47,24 @@ packages:
     resolution: {integrity: sha512-Ly6SlsVJ3mj+b18W3R8gNufB7dTICT105fJhodGAGgyC2oqnBAhqSiNDJ8V8DLY05cCz81GLI0CU5vNYA1EC/w==}
 
   forge-std@https://codeload.github.com/foundry-rs/forge-std/tar.gz/8987040ede9553cea20c95ad40d0455930f9c8e0:
-    resolution: {tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/8987040ede9553cea20c95ad40d0455930f9c8e0}
+    resolution: {gitHosted: true, integrity: sha512-bXzTEl9XIxu9P5Fw/98NUnxtcJpp8P6y4A+JOfff2+J+RJTZRRZKKnqGM1HbJw9pQLsS7VOW4IukLsXf2o+xpA==, tarball: https://codeload.github.com/foundry-rs/forge-std/tar.gz/8987040ede9553cea20c95ad40d0455930f9c8e0}
     version: 1.16.0
 
 snapshots:
 
-  '@cofhe/foundry-plugin@0.5.1':
+  '@cofhe/foundry-plugin@0.7.1':
     dependencies:
-      '@cofhe/mock-contracts': 0.5.1
-      '@fhenixprotocol/cofhe-contracts': 0.1.3
+      '@cofhe/mock-contracts': 0.7.1
+      '@fhenixprotocol/cofhe-contracts': 0.2.0
       '@openzeppelin/contracts': 5.4.0
 
-  '@cofhe/mock-contracts@0.5.1':
+  '@cofhe/mock-contracts@0.7.1':
     dependencies:
-      '@fhenixprotocol/cofhe-contracts': 0.1.3
+      '@fhenixprotocol/cofhe-contracts': 0.2.0
       '@openzeppelin/contracts': 5.4.0
       '@openzeppelin/contracts-upgradeable': 5.4.0(@openzeppelin/contracts@5.4.0)
 
-  '@fhenixprotocol/cofhe-contracts@0.1.3':
+  '@fhenixprotocol/cofhe-contracts@0.2.0':
     dependencies:
       '@openzeppelin/contracts': 5.6.1
 
